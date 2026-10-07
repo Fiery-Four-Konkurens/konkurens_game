@@ -1,0 +1,39 @@
+name: Sync with teacher framework
+
+on:
+  workflow_dispatch:
+
+  schedule:
+    - cron: "0 5 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: master
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Add teacher repository
+        run: |
+          git remote add upstream https://github.com/Relintai/sfw.git
+          git fetch upstream master
+
+      - name: Rebase onto teacher master
+        run: |
+          git rebase upstream/master
+
+      - name: Push updated master
+        run: |
+          git push origin master --force-with-lease

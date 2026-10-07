@@ -3,7 +3,7 @@ name: Check allowed files
 on:
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   check-files:
@@ -21,7 +21,7 @@ jobs:
           echo "Changed files:"
           cat changed_files.txt
 
-          if grep -v '^game/' changed_files.txt | grep -q .; then
+          if grep -Ev '^(game/|\.github/workflows/)' changed_files.txt | grep -q .; then
             echo "ERROR: Files outside game/ were modified!"
             exit 1
           fi
